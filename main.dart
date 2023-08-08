@@ -12,16 +12,14 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  late List<String> Board=List.filled(9, '');
-  late int Opoint,Xpoint;
-  bool Xturn=true;
+  late List<String> Board;
+   int Opoint=0,Xpoint=0;
+  bool Xturn=true,GameOver=false;
   int filledBoxes = 0;
   @override
   void initState() {
     super.initState();
     InitializeBoard();
-    Opoint=0;
-    Xpoint=0;
   }
 
 
@@ -30,86 +28,76 @@ class _MyAppState extends State<MyApp> {
       if (Xturn && Board[index] == '') {
         Board[index] = 'X';
         filledBoxes++;
-        //_checkForWinner();
       } else if (!Xturn && Board[index] == '') {
         Board[index] = 'O';
         filledBoxes++;
-        //_checkForWinner();
       }
-
       Xturn = !Xturn;
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
-        _checkForWinner();
-      });
+    _checkForWinner();
     });
   }
 
   void _checkForWinner() {
+    if(!GameOver&&filledBoxes<9){
+      if (Board[0] == Board[1] &&
+          Board[0] == Board[2] &&
+          Board[0] != '') {
+        _showWinDialog(Board[0]);
+      }
+      if (Board[3] == Board[4] &&
+          Board[3] == Board[5] &&
+          Board[3] != '') {
+        _showWinDialog(Board[3]);
+      }
+      if (Board[6] == Board[7] &&
+          Board[6] == Board[8] &&
+          Board[6] != '') {
+        _showWinDialog(Board[6]);
+      }
 
-    // Checking rows
-    if (Board[0] == Board[1] &&
-        Board[0] == Board[2] &&
-        Board[0] != '') {
-      _showWinDialog(Board[0]);
-    }
-    if (Board[3] == Board[4] &&
-        Board[3] == Board[5] &&
-        Board[3] != '') {
-      _showWinDialog(Board[3]);
-    }
-    if (Board[6] == Board[7] &&
-        Board[6] == Board[8] &&
-        Board[6] != '') {
-      _showWinDialog(Board[6]);
-    }
+      // Checking Column
+      if (Board[0] == Board[3] &&
+          Board[0] == Board[6] &&
+          Board[0] != '') {
+        _showWinDialog(Board[0]);
+      }
+      if (Board[1] == Board[4] &&
+          Board[1] == Board[7] &&
+          Board[1] != '') {
+        _showWinDialog(Board[1]);
+      }
+      if (Board[2] == Board[5] &&
+          Board[2] == Board[8] &&
+          Board[2] != '') {
+        _showWinDialog(Board[2]);
+      }
 
-    // Checking Column
-    if (Board[0] == Board[3] &&
-        Board[0] == Board[6] &&
-        Board[0] != '') {
-      _showWinDialog(Board[0]);
-    }
-    if (Board[1] == Board[4] &&
-        Board[1] == Board[7] &&
-        Board[1] != '') {
-      _showWinDialog(Board[1]);
-    }
-    if (Board[2] == Board[5] &&
-        Board[2] == Board[8] &&
-        Board[2] != '') {
-      _showWinDialog(Board[2]);
-    }
+      // Checking Diagonal
+      if (Board[0] == Board[4] &&
+          Board[0] == Board[8] &&
+          Board[0] != '') {
+        _showWinDialog(Board[0]);
+      }
 
-    // Checking Diagonal
-    if (Board[0] == Board[4] &&
-        Board[0] == Board[8] &&
-        Board[0] != '') {
-      _showWinDialog(Board[0]);
+      if (Board[2] == Board[4] &&
+          Board[2] == Board[6] &&
+          Board[2] != '') {
+        _showWinDialog(Board[2]);
+      }
     }
+    else
+      _showDrawDialog();
 
-    if (Board[2] == Board[4] &&
-        Board[2] == Board[6] &&
-        Board[2] != '') {
-      _showWinDialog(Board[2]);
-    }
-    else if (filledBoxes == 9) {
-        _showDrawDialog();
-    }
   }
 
   void _showWinDialog(String winner) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("Player $winner is the winner!"),
-      ),
-    );
 
     if (winner == 'O') {
       Opoint++;
     } else if (winner == 'X') {
       Xpoint++;
     }
-    return;
+    GameOver=true;
   }
 
   void _showDrawDialog() {
@@ -145,6 +133,7 @@ class _MyAppState extends State<MyApp> {
     });
 
     filledBoxes = 0;
+    GameOver=false;
   }
 
 
@@ -157,6 +146,7 @@ class _MyAppState extends State<MyApp> {
       }
     });
     filledBoxes = 0;
+    GameOver=false;
   }
 
 
@@ -247,7 +237,6 @@ class _MyAppState extends State<MyApp> {
 
 
 }
-
 
   Widget ScoreBoard() {
     return Expanded(
